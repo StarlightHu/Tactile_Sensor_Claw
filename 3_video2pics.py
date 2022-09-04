@@ -31,6 +31,10 @@ if __name__ == '__main__':
         print("Source path does not exist.")
         exit(0)
 
+    if not os.path.exists(os.path.join(SRC_PARENT_PATH, "info.txt")):
+        print("No info file!")
+        exit(0)
+
     if not os.path.exists(TAR_PARENT_PATH):
         try:
             os.mkdir(TAR_PARENT_PATH)
@@ -39,14 +43,33 @@ if __name__ == '__main__':
             print("Python does not support creating multi-level mkdir()")
             print("You should make sure that the grand-parent direction exists.")
 
+    fl = open(os.path.join(SRC_PARENT_PATH, "info.txt"), "r")
+    content = fl.readline()
+    fl.close()
+    SET = int(content.split("\n")[0].split(":")[-1])
+
     cnt = 0
     for fruit_data in os.listdir(SRC_PARENT_PATH):
         for video in os.listdir(os.path.join(SRC_PARENT_PATH, fruit_data)):
+            fl = open(os.path.join(SRC_PARENT_PATH, fruit_data, "info.txt"))
+            content = fl.readline()
+            INDEX = int(content.split("\n")[0].split(":")[-1])
+            content = fl.readline()
+            LABEL = int(content.split("\n")[0].split(":")[-1])
+            fl.close()
+
             if video.split(".")[-1].lower() == "avi":
                 path = os.path.join(TAR_PARENT_PATH, fruit_data, video.split(".")[0])
+
                 if not os.path.exists(os.path.join(TAR_PARENT_PATH, fruit_data)):
                     # os.mkdir不支持多级创建, 又不想为没有视频的文件夹创建, 所以在这里创建
                     os.mkdir(os.path.join(TAR_PARENT_PATH, fruit_data))
+
+                    fl = open(os.path.join(TAR_PARENT_PATH, fruit_data, "info.txt"), "w")
+                    fl.write("set: {}\nindex: {}\nlabel: {}\n".format(SET, INDEX, LABEL))
+                    fl.write("0: , \n1: , \n2: , \n")
+                    fl.close()
+
                 if not os.path.exists(path):
                     os.mkdir(path)
                 video_ins = cv2.VideoCapture(os.path.join(SRC_PARENT_PATH, fruit_data, video))

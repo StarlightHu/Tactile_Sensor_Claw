@@ -122,6 +122,11 @@ if __name__ == '__main__':
     if not os.path.exists(path):
         os.mkdir(path)
 
+    if not os.path.exists(os.path.join(path, "info.txt")):
+        fl = open(os.path.join(path, "info.txt"), "w")
+        fl.write("set: \ncount: \n")
+        fl.close()
+
     now_time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S_%f')
     save_path = os.path.join(path, now_time)
     os.mkdir(save_path)
@@ -131,9 +136,15 @@ if __name__ == '__main__':
     for cap in caps:
         cap.release()
     cv2.destroyAllWindows()
-    
-    content = input("Enter your fruit number:")
+
     file = open(os.path.join(save_path, "info.txt"), "w+")
-    meg = "fruit num: " + content + "\n"
+
+    content = input("Enter the index:")
+    meg = "index: " + content + "\n"
     file.write(meg)
+
+    content = input("Enter the label:")
+    meg = "label: " + content + "\n"
+    file.write(meg)
+
     file.close()
