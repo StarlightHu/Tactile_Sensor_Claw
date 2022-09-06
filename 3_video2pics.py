@@ -5,8 +5,8 @@ from datetime import datetime
 DELTA = 10
 FPS = 100
 
-SRC_PARENT_PATH = "/Volumes/USB128/4_30"
-TAR_PARENT_PATH = "/Users/liujilan/fruit_pics"
+SRC_PARENT_PATH = "/Volumes/USB128/raw_data/5"
+TAR_PARENT_PATH = "/Volumes/USB128/pic_data/5"
 
 
 def video_to_pics(video, parent_path):
@@ -48,8 +48,12 @@ if __name__ == '__main__':
     fl.close()
     SET = int(content.split("\n")[0].split(":")[-1])
 
-    cnt = 0
-    for fruit_data in os.listdir(SRC_PARENT_PATH):
+    lenght = len(os.listdir(SRC_PARENT_PATH))
+    for i, fruit_data in enumerate(os.listdir(SRC_PARENT_PATH)):
+        if not os.path.isdir(os.path.join(SRC_PARENT_PATH, fruit_data)):
+            print("{0} / {1}, {2}%".format(i, lenght, int(i * 100 / lenght)))
+            continue
+
         for video in os.listdir(os.path.join(SRC_PARENT_PATH, fruit_data)):
             fl = open(os.path.join(SRC_PARENT_PATH, fruit_data, "info.txt"))
             content = fl.readline()
@@ -76,5 +80,4 @@ if __name__ == '__main__':
                 video_to_pics(video_ins, path)
                 video_ins.release()
 
-        print(int(cnt * 100 / len(os.listdir(SRC_PARENT_PATH))), "%")
-        cnt += 1
+        print("{0} / {1}, {2}%".format(i, lenght, int(i * 100 / lenght)))
