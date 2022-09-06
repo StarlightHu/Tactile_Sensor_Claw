@@ -23,7 +23,20 @@ def load_labels_to_memomery(labels_path, is_preview=False):
     if is_preview:
         preview_labels(labels_dict)
 
-    return labels_dict
+
+    labels_dict_with_mean = {}
+    for key in labels_dict:
+        labels_dict_with_mean[key] = []
+        for ls in labels_dict[key]:
+            if ls[0] is None:
+                labels_dict_with_mean[key].append(None)
+            else:
+                labels_dict_with_mean[key].append(np.mean(np.array(ls)))
+
+
+
+    return labels_dict_with_mean
+
 
 
 def read_from_file(file_path, ls):
