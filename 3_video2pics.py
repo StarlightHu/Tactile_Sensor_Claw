@@ -51,7 +51,7 @@ if __name__ == '__main__':
     lenght = len(os.listdir(SRC_PARENT_PATH))
     for i, fruit_data in enumerate(os.listdir(SRC_PARENT_PATH)):
         if not os.path.isdir(os.path.join(SRC_PARENT_PATH, fruit_data)):
-            print("{0} / {1}, {2}%".format(i, lenght, int(i * 100 / lenght)))
+            print("{0} / {1}, {2}%".format(i + 1, lenght, int((i + 1) * 100 / lenght)))
             continue
 
         for video in os.listdir(os.path.join(SRC_PARENT_PATH, fruit_data)):
@@ -80,4 +80,4 @@ if __name__ == '__main__':
                 video_to_pics(video_ins, path)
                 video_ins.release()
 
-        print("{0} / {1}, {2}%".format(i, lenght, int(i * 100 / lenght)))
+        print("{0} / {1}, {2}%".format(i + 1, lenght, int((i + 1) * 100 / lenght)))

@@ -1,8 +1,8 @@
 import os
 import cv2
 
-SRC_PARENT_PATH = "/Volumes/USB128/pic_data/4"
-TAR_PARENT_PATH = "/Volumes/USB128/train_pic/4"
+SRC_PARENT_PATH = "/Volumes/USB128/pic_data/3"
+TAR_PARENT_PATH = "/Volumes/USB128/train_pic/3"
 
 PIC_NUM = 6
 
@@ -37,8 +37,14 @@ def choose_pics_due_info(DIR_path):
     for _ in range(3):
         content = fl.readline()
         tmp = content.split("\n")[0].split(":")[-1].split(",")
-        start.append(int(tmp[0]))
-        end.append(int(tmp[1]))
+        try:
+            start.append(int(tmp[0]))
+            end.append(int(tmp[1]))
+        except ValueError:
+            print(tmp)
+            print("Oh Shit!")
+            exit(0)
+
 
     return max(start), min(end)
 
@@ -70,7 +76,8 @@ if __name__ == '__main__':
         os.system("cp {} {}".format(os.path.join(SRC_PARENT_PATH, DIR, "info.txt"),
                                      os.path.join(TAR_PARENT_PATH, DIR, "info.txt")))
 
-        need_pics = choose_pics(os.path.join(SRC_PARENT_PATH, DIR))
+        # need_pics = choose_pics(os.path.join(SRC_PARENT_PATH, DIR))
+        need_pics = choose_pics(os.path.join(SRC_PARENT_PATH, DIR), True)
         for VIDEO in range(3):
             if not os.path.exists(os.path.join(TAR_PARENT_PATH, DIR, str(VIDEO))):
                 os.mkdir(os.path.join(TAR_PARENT_PATH, DIR, str(VIDEO)))
@@ -83,4 +90,4 @@ if __name__ == '__main__':
                 change_grey(os.path.join(SRC_PARENT_PATH, DIR, str(VIDEO), pic_src_name),
                             os.path.join(TAR_PARENT_PATH, DIR, str(VIDEO), pic_tar_name))
 
-        print("{0} / {1}, {2}%".format(i, lenght, int(i * 100 / lenght)))
+        print("{0} / {1}, {2}%".format(i + 1, lenght, int((i + 1) * 100 / lenght)))

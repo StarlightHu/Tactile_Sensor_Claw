@@ -36,7 +36,9 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict):
     datas_list = []
     labels_list = []
 
-    for DIR in os.listdir(os.path.join(datas_path)):
+    notice_time = 5  # 控制打印进度的
+    len_DIR = len(os.listdir(os.path.join(datas_path)))
+    for process, DIR in enumerate(os.listdir(os.path.join(datas_path))):
         if DIR[0] == ".":  # 跳过隐藏文件
             continue
 
@@ -45,6 +47,7 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict):
         if labels_dict[SET][LABEL - 1] is None:
             continue
 
+        # 改写这一段加入缓存机制
         single_data_list = []
         for i in range(3):
             for j in range(6):
@@ -56,11 +59,18 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict):
                     video_name,
                     pic_name)))
 
+        ##########
+
         single_label_list = [labels_dict[SET][LABEL - 1]
                              for _ in range(6)]
 
         datas_list.append(np.array(single_data_list))
         labels_list.append(np.array(single_label_list))
+
+        #  太耗时, 打印进度
+        process_in_per = int((process + 1) * 100 / len_DIR)
+        if process_in_per != 0 and process_in_per % notice_time == 0:
+            print(process_in_per, "%")
 
     return np.array(datas_list), np.array(labels_list)
 
