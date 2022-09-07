@@ -1,8 +1,8 @@
 import os
 import cv2
 
-SRC_PARENT_PATH = "/Volumes/USB128/pic_data/3"
-TAR_PARENT_PATH = "/Volumes/USB128/train_pic/3"
+SRC_PARENT_PATH = "/Volumes/USB128/pic_data/5"
+TAR_PARENT_PATH = "/Volumes/USB128/train_pic/5"
 
 PIC_NUM = 6
 
@@ -42,6 +42,7 @@ def choose_pics_due_info(DIR_path):
             end.append(int(tmp[1]))
         except ValueError:
             print(tmp)
+            print(DIR_path)
             print("Oh Shit!")
             exit(0)
 
@@ -51,7 +52,12 @@ def choose_pics_due_info(DIR_path):
 
 def change_grey(SRC_PATH, TAR_PATH):
     img = cv2.imread(SRC_PATH, 0)  # 以灰度模式打开图片(无论是否是彩图)
-    result = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+    try:
+        result = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+    except Exception as e:
+        print(SRC_PATH)
+        raise e
+
     # cv2.imshow('result', result)
     cv2.imwrite(TAR_PATH, result)
 

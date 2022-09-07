@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
+from datetime import datetime
 
 # import torch
 # import torchvision.models
@@ -41,6 +42,7 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict, cache_path):
     len_DIR = len(os.listdir(os.path.join(datas_path)))
     load_cnt = 0
     gen_cnt = 0
+    start_time = datetime.now()
     for process, DIR in enumerate(os.listdir(os.path.join(datas_path))):
         if DIR[0] == ".":  # 跳过隐藏文件
             continue
@@ -85,11 +87,12 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict, cache_path):
         #  太耗时, 打印进度
         process_in_per = int((process + 1) * 100 / len_DIR)
         if process_in_per != 0 and process_in_per % notice_time == 0:
-            print("{0}%; load: {1} / {3}; generate: {2} / {3}".format(
+            print("{0}%; load: {1} / {3}; generate: {2} / {3}; {4}".format(
                 process_in_per,
                 load_cnt,
                 gen_cnt,
-                len_DIR
+                len_DIR,
+                (datetime.now() - start_time).total_seconds()
             ))
 
     return np.array(datas_list), np.array(labels_list)
@@ -140,11 +143,3 @@ def load_numpy_cache(cache_path, DIR):
 if __name__ == '__main__':
     a, b = load_pics_and_labels_to_numpy(DATA_PATH, test_dict, CACHE_PATH)
     pass
-
-def load_from_drive(project_path):
-    labels_dict = load_labels_to_memomery(os.path.join(project_path, "label"))
-    load_pics_and_labels_to_numpy_test(os.path.join(project_path, "data"), labels_dict)
-    return load_pics_and_labels_to_numpy(
-        os.path.join(project_path, "data"),
-        labels_dict,
-        os.path.join(project_path, "cache"))

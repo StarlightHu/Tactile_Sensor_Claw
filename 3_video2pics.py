@@ -5,8 +5,8 @@ from datetime import datetime
 DELTA = 10
 FPS = 100
 
-SRC_PARENT_PATH = "/Volumes/USB128/raw_data/5"
-TAR_PARENT_PATH = "/Volumes/USB128/pic_data/5"
+SRC_PARENT_PATH = "/Volumes/USB128/raw_data/1"
+TAR_PARENT_PATH = "/Volumes/USB128/pic_data/1"
 
 
 def video_to_pics(video, parent_path):

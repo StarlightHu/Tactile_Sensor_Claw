@@ -1,6 +1,7 @@
 import os
 
 def load_pics_and_labels_to_numpy_test(datas_path, labels_dict):
+    print("Test Load start")
     if not os.path.exists(datas_path):
         raise Exception("Datas path does not exist.")
 

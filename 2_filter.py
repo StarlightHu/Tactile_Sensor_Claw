@@ -1,11 +1,12 @@
 import os
 
-SRC_PATH = "./fruit_data"
-#SRC_PATH = "./3_50"
-TAR_PATH = "./3_50"
+#SRC_PATH = "./fruit_data"
+SRC_PATH = "./raw_data/5"
+TAR_PATH = "./5_30"
 
 ls = []
 
+count = 90
 
 
 if __name__ == '__main__':
@@ -25,15 +26,15 @@ if __name__ == '__main__':
 			ls.append(num)
 			
 			
-			if num > 100 or num == 0:
+			if num > count or num == 0:
 				continue
 				
-			os.system("mv {} {}/".format(os.path.join(SRC_PATH, video), TAR_PATH))
+			#os.system("mv {} {}/".format(os.path.join(SRC_PATH, video), TAR_PATH))
 	
 	print("\nNot come numbers:")			
-	for i in range(1, 101):
+	for i in range(1, count + 1):
 		if i not in ls:
-			print(i, end="")
+			print(i, end=",")
 			
 	print("\nlen: ", len(os.listdir(TAR_PATH)))
 			
