@@ -22,6 +22,8 @@ def load_pics_and_labels_to_numpy_test(datas_path, labels_dict):
                     video_name,
                     pic_name))
 
+    print("Test Load is OK")
+
 def single_img_to_numpy_test(img_path):
     if not os.path.exists(img_path):
         print(img_path)

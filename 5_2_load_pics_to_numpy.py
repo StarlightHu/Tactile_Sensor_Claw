@@ -12,7 +12,8 @@ from PIL import Image
 from load_labels_to_memomery import load_labels_to_memomery
 
 LABEL_PATH = "/Volumes/USB128/lab_data"
-DATA_PATH = "/Volumes/USB128/train_pic/4"
+DATA_PATH = "/Volumes/USB128/train_pic/3"
+CACHE_PATH = "/Volumes/USB128/tmp"
 
 
 def single_img_to_numpy2(img_path):
@@ -29,7 +30,7 @@ test_dict = load_labels_to_memomery(LABEL_PATH, True)
 # TESt
 
 
-def load_pics_and_labels_to_numpy(datas_path, labels_dict):
+def load_pics_and_labels_to_numpy(datas_path, labels_dict, cache_path):
     if not os.path.exists(datas_path):
         raise Exception("Datas path does not exist.")
 
@@ -38,6 +39,8 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict):
 
     notice_time = 5  # 控制打印进度的
     len_DIR = len(os.listdir(os.path.join(datas_path)))
+    load_cnt = 0
+    gen_cnt = 0
     for process, DIR in enumerate(os.listdir(os.path.join(datas_path))):
         if DIR[0] == ".":  # 跳过隐藏文件
             continue
@@ -47,30 +50,47 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict):
         if labels_dict[SET][LABEL - 1] is None:
             continue
 
-        # 改写这一段加入缓存机制
-        single_data_list = []
-        for i in range(3):
-            for j in range(6):
-                video_name = str(i)
-                pic_name = str(j).zfill(10) + ".jpg"
-                single_data_list.append(single_img_to_numpy(os.path.join(
-                    datas_path,
-                    DIR,
-                    video_name,
-                    pic_name)))
+        if have_cached(cache_path, DIR):
+            single_data_np = load_numpy_cache(cache_path, DIR)
+            load_cnt += 1
+        else:
+            single_data_list = []
 
-        ##########
+            for i in range(3):
+                for j in range(6):
+                    video_name = str(i)
+                    pic_name = str(j).zfill(10) + ".jpg"
+                    single_data_list.append(single_img_to_numpy(os.path.join(
+                        datas_path,
+                        DIR,
+                        video_name,
+                        pic_name)))
 
-        single_label_list = [labels_dict[SET][LABEL - 1]
-                             for _ in range(6)]
+            single_data_cache_np = np.array(single_data_list)
+            store_numpy_cache(cache_path, DIR, single_data_cache_np)
+            single_data_np = load_numpy_cache(cache_path, DIR)
 
-        datas_list.append(np.array(single_data_list))
-        labels_list.append(np.array(single_label_list))
+            gen_cnt += 1
+
+
+
+        single_label_np = np.array([labels_dict[SET][LABEL - 1]
+                                    for _ in range(6)])
+
+        datas_list.append(single_data_np)
+        labels_list.append(single_label_np)
+
+
 
         #  太耗时, 打印进度
         process_in_per = int((process + 1) * 100 / len_DIR)
         if process_in_per != 0 and process_in_per % notice_time == 0:
-            print(process_in_per, "%")
+            print("{0}%; load: {1} / {3}; generate: {2} / {3}".format(
+                process_in_per,
+                load_cnt,
+                gen_cnt,
+                len_DIR
+            ))
 
     return np.array(datas_list), np.array(labels_list)
 
@@ -103,7 +123,28 @@ def get_info_set_and_label(DIR_path):
 
     return str(set_num), label_num
 
+def have_cached(cache_path, DIR):
+    return os.path.exists(os.path.join(cache_path, DIR + ".csv"))
+
+
+def store_numpy_cache(cache_path, DIR, np_array):
+    csv_path = os.path.join(cache_path, DIR + ".csv")
+    np.savetxt(csv_path, np_array, delimiter=",", fmt='%0.2f')
+
+
+def load_numpy_cache(cache_path, DIR):
+    csv_path = os.path.join(cache_path, DIR + ".csv")
+    return np.genfromtxt(csv_path, delimiter=',').astype(np.float64)
+
 
 if __name__ == '__main__':
-    a, b = load_pics_to_numpy(DATA_PATH, test_dict)
+    a, b = load_pics_and_labels_to_numpy(DATA_PATH, test_dict, CACHE_PATH)
     pass
+
+def load_from_drive(project_path):
+    labels_dict = load_labels_to_memomery(os.path.join(project_path, "label"))
+    load_pics_and_labels_to_numpy_test(os.path.join(project_path, "data"), labels_dict)
+    return load_pics_and_labels_to_numpy(
+        os.path.join(project_path, "data"),
+        labels_dict,
+        os.path.join(project_path, "cache"))
