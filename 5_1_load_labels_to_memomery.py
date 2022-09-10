@@ -22,6 +22,9 @@ def load_labels_to_memomery(labels_path, is_preview=False):
 
     if is_preview:
         preview_labels(labels_dict)
+        for key, val in labels_dict.items():
+            for i, sth in enumerate(val):
+                print("{}, {}: {}".format(key, i, sth))
 
 
     labels_dict_with_mean = {}

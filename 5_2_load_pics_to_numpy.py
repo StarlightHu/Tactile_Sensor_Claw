@@ -43,6 +43,8 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict, cache_path):
     load_cnt = 0
     gen_cnt = 0
     start_time = datetime.now()
+    print("Start at {}.".format(start_time.strftime('%Y_%m_%d_%H_%M_%S_%f')))
+    pre_pro = None
     for process, DIR in enumerate(os.listdir(os.path.join(datas_path))):
         if DIR[0] == ".":  # 跳过隐藏文件
             continue
@@ -74,26 +76,26 @@ def load_pics_and_labels_to_numpy(datas_path, labels_dict, cache_path):
 
             gen_cnt += 1
 
-
-
         single_label_np = np.array([labels_dict[SET][LABEL - 1]
                                     for _ in range(6)])
 
         datas_list.append(single_data_np)
         labels_list.append(single_label_np)
 
-
-
         #  太耗时, 打印进度
         process_in_per = int((process + 1) * 100 / len_DIR)
         if process_in_per != 0 and process_in_per % notice_time == 0:
-            print("{0}%; load: {1} / {3}; generate: {2} / {3}; {4}".format(
-                process_in_per,
-                load_cnt,
-                gen_cnt,
-                len_DIR,
-                (datetime.now() - start_time).total_seconds()
-            ))
+            if pre_pro != process_in_per:
+                print("{0}%; load: {1} / {3}; generate: {2} / {3}; {4}".format(
+                    process_in_per,
+                    load_cnt,
+                    gen_cnt,
+                    len_DIR,
+                    (datetime.now() - start_time).total_seconds()
+                ))
+                pre_pro = process_in_per
+
+    print("Loading is done.")
 
     return np.array(datas_list), np.array(labels_list)
 
@@ -125,6 +127,7 @@ def get_info_set_and_label(DIR_path):
     fl.close()
 
     return str(set_num), label_num
+
 
 def have_cached(cache_path, DIR):
     return os.path.exists(os.path.join(cache_path, DIR + ".csv"))

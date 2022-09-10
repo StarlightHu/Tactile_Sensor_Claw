@@ -1,8 +1,8 @@
 import os
 import cv2
 
-SRC_PARENT_PATH = "/Volumes/USB128/pic_data/5"
-TAR_PARENT_PATH = "/Volumes/USB128/train_pic/5"
+SRC_PARENT_PATH = "/Volumes/USB128/pic_data/7"
+TAR_PARENT_PATH = "/Volumes/USB128/train_pic/7"
 
 PIC_NUM = 6
 
