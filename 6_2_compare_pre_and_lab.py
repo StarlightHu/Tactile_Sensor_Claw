@@ -58,42 +58,26 @@ class CompareVimer:
         plt.xticks(np.arange(0, max_ticks, 5))
         plt.yticks(np.arange(0, max_ticks, 5))
 
-        sub_aim_lab = []
-        sub_aim_pre = []
-        sub_remain_lab = []
-        sub_remain_pre = []
-
-        def between_l_r(num, l, r):
-            l_flag = True
-            r_flag = True
-            if l is not None:
-                l_flag = l <= num
-            if r is not None:
-                r_flag = r >= num
-            return l_flag and r_flag
-
-        for i, label in enumerate(lab):
-            if between_l_r(label, self.left, self.right):
-                sub_aim_lab.append(lab[i])
-                sub_aim_pre.append(pre[i])
-            else:
-                sub_remain_lab.append(lab[i])
-                sub_remain_pre.append(pre[i])
-
-        # plt.scatter(lab, pre, sizes=[5 for _ in range(len(lab))])
-        plt.scatter(sub_aim_lab, sub_aim_pre,
-                    sizes=[5 for _ in range(len(sub_aim_lab))],
-                    color=['b' for _ in range(len(sub_aim_lab))])
-        plt.scatter(sub_remain_lab, sub_remain_pre,
-                    sizes=[5 for _ in range(len(sub_remain_lab))],
-                    color=['c' for _ in range(len(sub_remain_lab))])
+        plt.scatter(lab, pre, sizes=[5 for _ in range(len(lab))])
 
         r2_all = r2_score(lab, pre)
-        r2_aim = r2_score(sub_aim_lab, sub_aim_pre)
 
-        plt.title("All R^2={:.4f};   [{}, {}] R^2={:.4f}".format(
-            r2_all, self.left, self.right, r2_aim))
+        plt.title("Compare Scatter R^2={:.4f}".format(r2_all))
         plt.show()
+
+    def get_r2(self):
+        if not os.path.exists(self.pre_path):
+            print("pre_path doesn't exists")
+
+        if not os.path.exists(self.lab_path):
+            print("lab_path doesn't exists")
+
+        pre = np.genfromtxt(self.pre_path, delimiter=',').astype(np.float64)
+        lab = np.genfromtxt(self.lab_path, delimiter=',').astype(np.float64)
+        lab = lab.reshape((-1, 6), order="C")[:, 1]
+
+        return r2_score(lab, pre)
+
 
 
 if __name__ == '__main__':
